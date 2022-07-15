@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkarmada_alliance_docusaurus=self.webpackChunkarmada_alliance_docusaurus||[]).push([[4195],{2841:function(a,u,e){e.r(u),e.d(u,{default:function(){return r}});var c=e(7294),n=e(6775);function r(){return c.createElement(n.l_,{to:"/docs/docs/"})}}}]);
