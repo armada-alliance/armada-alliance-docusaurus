@@ -11,7 +11,7 @@ import TabItem from "@theme/TabItem";
 
 
 :::success
-#### Current Official Cardano Node Version: 8.1.1
+#### Current Official Cardano Node Version: [8.1.2](https://github.com/input-output-hk/cardano-node)
 :::
 
 ### Overview 🗒
@@ -145,12 +145,13 @@ This ensures the system is aware of libsodium (not just at the user level).
 Dynamic binaries and Cardano node configuration files provided by [SRN pool ](https://armada-alliance.com/stake-pools/cc1b1c03798884c636703443a23b8d9e827d6c0417921600394198a0):pray: at our [Github repository](https://github.com/armada-alliance/cardano-node-binaries).
 
 ```bash title=">_ Terminal"
-wget -O cardano-8_1_1-aarch64-ubuntu_2004.zip https://github.com/armada-alliance/cardano-node-binaries/blob/main/dynamic-binaries/8.1.1/cardano-8_1_1-aarch64-ubuntu_2004.zip?raw=true```
+wget -O cardano-8_1_2-aarch64-ubuntu_2004.zip https://github.com/armada-alliance/cardano-node-binaries/blob/main/dynamic-binaries/8.1.2/cardano-8_1_2-aarch64-ubuntu_2004.zip?raw=true
+```
 
 Extract the content from the zip file.
 
 ```bash title=">_ Terminal"
-unzip cardano-8_1_1-aarch64-ubuntu_2004.zip
+unzip cardano-8_1_2-aarch64-ubuntu_2004.zip
 ```
 
 ### Check if cardano-node is running already
@@ -177,7 +178,7 @@ If you use Linux's `htop` service just check for a processing running starting w
 If you are using the [Pi-Node guide](../pi-pool-tutorial/) and your cardano-node & cli in `~/.local/bin`
 
 ```bash title=">_ Terminal"
-mv cardano-8_1_1-aarch64-ubuntu_2004/* ~/.local/bin
+mv cardano-8_1_2-aarch64-ubuntu_2004/* ~/.local/bin
 ```
 
 ### Check your cardano-node version
@@ -189,8 +190,8 @@ cardano-node --version
 #### Output:
 
 ```bash title=">_ Terminal"
-cardano-node 8.1.1 - linux-aarch64 - ghc-8.10
-git rev 6f79e5c3ea109a70cd01910368e011635767305a
+cardano-node 8.1.2 - linux-aarch64 - ghc-8.10
+git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767
 ```
 
 ### Check your cardano-cli version
@@ -202,8 +203,8 @@ cardano-cli --version
 #### Output:
 
 ```bash title=">_ Terminal"
-cardano-cli 8.1.1 - linux-aarch64 - ghc-8.10
-git rev 6f79e5c3ea109a70cd01910368e011635767305a
+cardano-cli 8.1.2 - linux-aarch64 - ghc-8.10
+git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767
 ```
 
 ### Replace the Cardano node configuration files

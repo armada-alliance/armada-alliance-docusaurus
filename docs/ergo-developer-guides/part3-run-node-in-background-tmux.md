@@ -121,9 +121,7 @@ ssh pi@headless.local
 
 Type in the password
 
-```bash
-cd /mnt/hd1
-```
+
 
 To where we are storing the node mounted on the external SSD drive.
 

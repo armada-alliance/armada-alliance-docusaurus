@@ -60,3 +60,33 @@ A really simple and nice option is to just use [Satergo](https://satergo.com/) f
 You can just download and run it, batteries included. If you don't have the computer memory storage, you can reference a "remote" full node.  
 
 This is a great option, plus the UI/UX is beautiful.
+
+## Special Thanks
+Appreciate the help from the following folks and resources!
+- [Ergo Platform](https://twitter.com/Ergo_Platform) Documentation, tutorial, and chatbot
+- [Eeysirhc](https://twitter.com/Eeysirhc) for an awesome [ergo-rpi tutorial](https://github.com/Eeysirhc/ergo-rpi) that was easy to follow and really helped
+- [Wael](https://twitter.com/Piada_stakePool) Teaching me to tmux
+- [WCat of Star Forge Stake Pool ](https://twitter.com/Star_Forge_Pool) for continuous education in all things sysadmin & prepping :) 
+- [Reqlez ($psiloblox)](https://twitter.com/PSILOBLOX) for ergo.conf configuration file help & the Rosen Bridge early adopters invitation
+- [ErgOne](https://twitter.com/Erg0ne) & [koukarin4](https://twitter.com/koukarin4) for the encouragement of a helpful tutorial
+- [Armada Alliance](https://twitter.com/alliance_armada) for the community of ARM builders continusouly educating and amazing [documentation resources](https://armada-alliance.com/docs/)
+- [Satergo Project](https://twitter.com/SatergoWallet) for an awesome full node ergo wallet and ergonodes.net platform
+- [Ergo Foundation](https://twitter.com/ErgoFoundation) for the continuous AMA's teaching grassroot decentralization matters
+- [Kushti](https://twitter.com/chepurnoy) for relentless unstoppable building
+
+-------------
+
+## Donations or Staking
+
+If you find this tutorial helpful, here's my donation tip jar! #Ergo2Top10
+
+![donations-qr-code](../../static/ergo-images/wallet-qr-code.jpeg)
+
+```bash
+9htXsxhTNpt8LaSdLF5PDqNe99RaXmMRTAJu3iTB57ivxx3UNFa
+```
+
+Or better yet, if an $ADA hodler too, Stake to [BALNC Pool](https://pool.pm/a43ceac028a673e9f8611de0f683c70fdcadde560f28c2fb8cfabc81)! We provide high quality on-chain analysis and data visualization using Svelte: https://www.balanceanalytics.io/. Cheers!
+
+## Questions?
+Feel free to jump into our [Ergo - BALANCE](https://matrix.to/#/#ergo:forum.balanceanalytics.io) room to chat and ask questions. This chat is in the Matrix.org open source commmunication protocol, we recommend using the Element Client.
