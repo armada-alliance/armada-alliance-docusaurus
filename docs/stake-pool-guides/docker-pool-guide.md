@@ -17,18 +17,12 @@ operating system where Docker is installed. Using our Docker image reduces the c
 ## System requirements
 
 * CPU: ARM64 processor min 2 cores at 2GHz or faster.
-* Memory: 16GB of RAM.
-* Storage: 50 GB.
+* Memory: 24GB of RAM.
+* Storage: 150 GB.
 * OS: Linux (recommended Ubuntu)
 * Additional Software: Docker
 * Broadband: 10 Mbps +
 
-:::tip
-
-If you intend to use a Raspberry Pi 8GB RAM for the deployment of this docker image, please follow our [Server Setup guide](https://armada-alliance.com/docs/stake-pool-guides/pi-pool-tutorial/pi-node-full-guide/server-setup) first. 
-This guide describes how to optimize the Hardware to satisfy the above listed system requirements. 
-
-:::
 
 # 1.Install Docker
 
@@ -127,7 +121,7 @@ Either way, the docker image includes:
 Pull the image with:
 
 ```bash
-docker pull armadaalliance/armada-cn:8.1.1
+docker pull armadaalliance/armada-cn:8.7.2
 ```
 
 You should see your Cardano node docker image in the list:
@@ -138,7 +132,7 @@ docker images
 
 ```bash
 REPOSITORY              TAG            IMAGE ID       CREATED          SIZE
-armadaalliance/armada-cn        8.1.1         da4414775ce6   37 seconds ago   700MB
+armadaalliance/armada-cn        8.7.2         da4414775ce6   37 seconds ago   700MB
 ```
 
 You can now proceed with chapter 4, in order to start the node.
@@ -161,7 +155,7 @@ You should see your Cardano node docker image in the list, e.g.
 
 ```bash title=">_ Terminal"
 REPOSITORY              TAG            IMAGE ID       CREATED          SIZE
-armadaalliance/armada-cn        8.1.1         da4414775ce6   37 seconds ago   700MB
+armadaalliance/armada-cn        8.7.2         da4414775ce6   37 seconds ago   700MB
 <none>                  <none>         f3891eef21e4   3 minutes ago    1.09GB
 ```
 
@@ -197,7 +191,7 @@ Important: Change the directory paths CN_CONFIG_PATH and CN_DB_PATH to the corre
 ```bash title=">_ Terminal"
 ##Configuration for relay and block producing node
 CNIMAGENAME="armada/armada-cn"                                   ## Name of the Cardano docker image
-CNVERSION="8.1.1"                                                ## Version of the cardano-node. It must match with the version of the docker i>
+CNVERSION="8.7.2"                                                ## Version of the cardano-node. It must match with the version of the docker i>
 CNNETWORK="preprod"                                              ## Use "mainnet" if connecting node to the mainnet
 CNMODE="relay"                                                   ## Use "bp" if you configure the node as block production node
 CNPORT="3001"                                                    ## Define the port of the node
@@ -234,7 +228,7 @@ If the docker node started successfully, you might see something like this:
 
 ```bash title=">_ Terminal"
 CONTAINER ID   IMAGE                     COMMAND                  CREATED          STATUS                    PORTS                                                                                      NAMES
-fed0cfbf7d86   armadaalliance/armada-cn:8.1.1   "bash title=">_ Terminal" -c /home/carda…"   12 seconds ago   Up 10 seconds (healthy)   0.0.0.0:3001->3001/tcp, :::3001->3001/tcp, 0.0.0.0:12799->12798/tcp, :::12799->12798/tcp   cardano-node-testnet-1.34.1
+fed0cfbf7d86   armadaalliance/armada-cn:8.7.2   "bash title=">_ Terminal" -c /home/carda…"   12 seconds ago   Up 10 seconds (healthy)   0.0.0.0:3001->3001/tcp, :::3001->3001/tcp, 0.0.0.0:12799->12798/tcp, :::12799->12798/tcp   cardano-node-testnet-1.34.1
 ```
 
 You can also check the logs of the running cardano-node:
@@ -281,22 +275,22 @@ docker exec -it {CONTAINER ID} /home/cardano/pi-pool/scripts/gLiveView.sh
 
 ## Check the scheduled slots of the block production node
 
-Our Docker image contains the YaLL python script from [SNAKE pool](https://github.com/asnakep/YaLL.git). This tool allows to
+Our Docker image contains the poolLeaderLogs python script from [SNAKE pool](https://github.com/asnakep/poolLeaderLogs). This tool allows to
 query the blockchain for the scheduled slots for your block production node.
 
 Before using the script, make sure that the right configurations are set in our shell script run-node.sh. Set the following variables:
 
 ```bash title=">_ Terminal"
-CN_POOL_ID="c3e7025ebae638e994c149e5703e82619b31897c9e1d64fc684f81c2"   ## Your stake pool ID (for YaLL script)
-CN_POOL_TICKER="MINI1"                                                  ## Your pool ticker (for YaLL script)
-CN_VRF_SKEY_PATH="YaLL.vrf.skey"                                        ## Name of the vrf.skey file. It must be located in the same directory as CN_KEY_PATH (for ScheduledBlock script)
+CN_POOL_ID="c3e7025ebae638e994c149e5703e82619b31897c9e1d64fc684f81c2"   ## Your stake pool ID (for poolLeaderLogs script)
+CN_POOL_TICKER="MINI1"                                                  ## Your pool ticker (for poolLeaderLogs script)
+CN_VRF_SKEY_PATH="poolLeaderLogs.vrf.skey"                                        ## Name of the vrf.skey file. It must be located in the same directory as CN_KEY_PATH (for ScheduledBlock script)
 CN_KEY_PATH="/home/julienterrier/Cardano-node-docker/node/files/.keys"  ## Path to the folder where the OP certificate and keys are stored on the host system
 ```
 
-Start the YaLL.py script and follow the instructions on the terminal:
+Start the poolLeaderLogs.py script and follow the instructions on the terminal:
 
 ```bash title=">_ Terminal"
-docker exec -it {CONTAINER ID} python3 /home/cardano/pi-pool/scripts/ScheduledBlocks/YaLL.py
+docker exec -it {CONTAINER ID} python3 /home/cardano/pi-pool/scripts/ScheduledBlocks/poolLeaderLogs.py
 ```
 # Run node in P2P (peer-to-peer) mode
 
