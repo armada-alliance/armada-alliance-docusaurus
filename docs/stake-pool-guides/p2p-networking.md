@@ -22,6 +22,7 @@ Edit your mainnet-config.json. I add them just above ***"defaultBackends": [***.
 
 ```bash title="mainnet-config.json"
   "EnableP2P": true,
+  "PeerSharing": true,
   "TargetNumberOfRootPeers": 100,
   "TargetNumberOfKnownPeers": 100,
   "TargetNumberOfEstablishedPeers": 50,
