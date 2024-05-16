@@ -114,9 +114,7 @@ Create a basic authentication file to secure access to the Ogmios server. Be sur
 
 ```bash
 sudo htpasswd -c /etc/nginx/.ogmios <username>
-sudo chmod 640 /etc/nginx/.ogmios
 ```
-
 
 ### Create Nginx server block
 
