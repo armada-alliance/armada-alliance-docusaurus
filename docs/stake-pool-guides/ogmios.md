@@ -2,7 +2,6 @@
 
 :::caution Basic auth without TLS
 This guide is not going to cover Nginx with TLS. Be aware that sending the basic auth username and password to Nginx will be clear text over the wire. For TLS with certbot and Nginx you will need a DNS name. This is a simple protection to prevent abuse. Use a simple password and know it can be read by 5 eyes.
-
 :::
 
 Grab the latest Ogmios binary here for your systems architecture.
@@ -13,7 +12,7 @@ Put it somewhere in system PATH. I use ~/.local/bin but you can put the binary i
 
 ### Make sure ~/.local/bin exists and grab the binary.
 
-```
+```sh
 mkdir ~/.local/bin
 mkdir ~/tmp
 cd ~/tmp
@@ -27,14 +26,14 @@ chmod +x ~/.local/bin/ogmios
 
 Add ~/.local/bin to the users PATH
 
-```
+```sh
 cd ~/.local/bin; echo "export PATH=\"$PWD:\$PATH\"" >> $HOME/.bashrc
 source ~/.bashrc
 ```
 
 ## Confirm Ogmios is in PATH
 
-```
+```sh
 ogmios version
 ```
 
@@ -42,32 +41,32 @@ ogmios version
 
 Create a startup script for Ogmios edit below to correct socket and config.json locations.
 
-```
+```sh
 nano ${HOME}/.local/bin/ogmios-service
 ```
 
-```
+```sh
 #!/bin/bash
 ogmios --host 127.0.0.1 --node-socket <path to cardano node socket> --node-config <path to cardano node config.json>
 ```
 
 Make it executable.
 
-```
+```sh
 chmod +x ${HOME}/.local/bin/ogmios-service
 
 ```
 
 Test it. ctrl+c to exit.
 
-```
+```sh
 ${HOME}/.local/bin/ogmios-service
 
 ```
 
 ## Create the systemd unit file.
 
-```
+```sh
 sudo tee /etc/systemd/system/ogmios.service <<EOF
 # Ogmios Service
 [Unit]
@@ -88,7 +87,7 @@ EOF
 
 Start the service, confirm its running.
 
-```
+```sh
 sudo systemctl start daemon-reload
 sudo systemctl start ogmios.service
 journalctl -u ogmios.service -f
@@ -96,22 +95,22 @@ journalctl -u ogmios.service -f
 
 If everything looks good enable start at boot.
 
-```
+```sh
 sudo systemctl enable ogmios.service
 ```
 
 ## Install Nginx & apache-utils
 
-```
+```sh
 sudo apt install nginx
 sudo apt install apache2-utils
 ```
 
 ### Create Basic Authentication File
 
-Create a basic authentication file to secure access to the Ogmios server:
+Create a basic authentication file to secure access to the Ogmios server. Be sure to edit the username.
 
-```shell
+```sh
 sudo htpasswd -c /etc/nginx/.ogmios <username>
 sudo chmod 640 /etc/nginx/.ogmios
 ```
@@ -119,7 +118,7 @@ sudo chmod 640 /etc/nginx/.ogmios
 
 ### Create Nginx server block
 
-```
+```sh
 sudo tee /etc/nginx/sites-available/ogmios > /dev/null <<EOF
 server {
     listen 80 default_server;  # Listen on port 80 and make this the default server
@@ -146,19 +145,19 @@ EOF
 
 Link it to sites enabled.
 
-```
+```sh
 sudo ln -s /etc/nginx/sites-available/ogmios /etc/nginx/sites-enabled/
 ```
 
 Ensure Nginx is happy with it.
 
-```
+```sh
 sudo nginx -t
 ```
 
 If everything is ok..
 
-```
+```sh
 sudo service nginx restart
 ```
 
