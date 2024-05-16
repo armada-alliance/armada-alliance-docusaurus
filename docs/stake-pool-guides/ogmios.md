@@ -110,7 +110,8 @@ sudo apt install apache2-utils
 
 ### Create Basic Authentication File
 
-Create a basic authentication file to secure access to the Ogmios server. Be sure to edit the username.
+Create a basic authentication file to secure access to the Ogmios server. Be sure to edit the username. You will be prompted to add a password
+ which will be hashed on disk.
 
 ```bash
 sudo htpasswd -c /etc/nginx/.ogmios <username>
