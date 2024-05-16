@@ -90,7 +90,7 @@ EOF
 Start the service, confirm its running.
 
 ```bash
-sudo systemctl start daemon-reload
+sudo systemctl daemon-reload
 sudo systemctl start ogmios.service
 journalctl -u ogmios.service -f
 ```
