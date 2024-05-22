@@ -150,6 +150,12 @@ Link it to sites enabled.
 sudo ln -s /etc/nginx/sites-available/ogmios /etc/nginx/sites-enabled/
 ```
 
+Unlink the current default server block
+
+```bash
+sudo unlink /etc/nginx/sites-enabled/default
+```
+
 Ensure Nginx is happy with it.
 
 ```bash
