@@ -1,6 +1,6 @@
 import React from "react";
 //import AllianceLogo from "../../../src/theme/Footer/armada-alliance-logo.png";
-//import Footer from '@theme-original/Footer';
+import Footer from '@theme-original/Footer';
 import { MendableFloatingButton } from "@mendable/search"
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
@@ -148,7 +148,7 @@ export default function FooterWrapper(props) {
           </div>
         </div>
         <MendableFloatingButton icon={icon} cmdShortcutKey="J" dialogPlaceholder="Ask" anon_key={customFields.mendableAnonKey} style={style} floatingButtonStyle={floatingButtonStyle} />
-
+        <Footer {...props} />
       </footer>
     </>
   );
