@@ -64,12 +64,12 @@ Failure to disable key expiry will knock your pool offline when they expire afte
 :::
 
 Once the machines are added you should disable key expiry on each machine or the keys used to connect to the VPN will expire after 90 days and those
-nodes will be unable to connect. You can do this on the [Tailscale](tailscale.com) website by clicking the ... for each machine and choosing 'Disable key expiry'.
+nodes will be unable to connect. You can do this on the [Tailscale](https://tailscale.com) website by clicking the ... for each machine and choosing 'Disable key expiry'.
 You can always generate new keys at any time if you wish. If you do get locked out you can toggle the expiry on the website and restart the server to get back into it.
 
 ### Access Control layer
 
-Click the 'Access controls' tab on the [Tailscale](tailscale.com) website. By default there is a rule to allow all traffic on all ports between the machines in the tailnet.
+Click the 'Access controls' tab on the [Tailscale](https://tailscale.com) website. By default there is a rule to allow all traffic on all ports between the machines in the tailnet.
 This is fine to get started but know you have the ability to group machines and only allow certain ports to communicate through the VPN to machines in that group.
 For example I have a mainnet and a testnet group and only allow the ports needed for those machines.
 
