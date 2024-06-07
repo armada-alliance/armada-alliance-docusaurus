@@ -159,7 +159,7 @@ tmpfs    /run/shm    tmpfs    ro,noexec,nosuid    0 0
 Add a couple lines to the bottom of /etc/security/limits.conf
 
 ```bash title=">_ Terminal"
-sudo bash -c "echo -e '${USER} soft nofile 800000\n${USER} hard nofile 1048576\n' >> /etc/security/limits.conf"
+sudo bash -c "echo -e '$\{%USER} soft nofile 800000\n$\{%USER} hard nofile 1048576\n' >> /etc/security/limits.conf"
 ```
 
 Confirm it was added to the bottom.
@@ -424,18 +424,18 @@ There is a 500 ₳ Registration deposit and another 5 ₳ in registration costs 
 Create the directories for our project.
 
 ```bash title=">_ Terminal"
-mkdir -p ${HOME}/.local/bin
-mkdir -p ${HOME}/pi-pool/files
-mkdir -p ${HOME}/pi-pool/scripts
-mkdir -p ${HOME}/pi-pool/logs
-mkdir ${HOME}/git
-mkdir ${HOME}/tmp
+mkdir -p $\{%HOME}/.local/bin
+mkdir -p $\{%HOME}/pi-pool/files
+mkdir -p $\{%HOME}/pi-pool/scripts
+mkdir -p $\{%HOME}/pi-pool/logs
+mkdir $\{%HOME}/git
+mkdir $\{%HOME}/tmp
 ```
 
 Create an .adaenv file, choose which network you want to be on and source the file. This file will hold the variables/settings for operating a Pi-Node. /home/ada/.adaenv
 
 ```bash title=">_ Terminal"
-echo -e NODE_CONFIG=testnet >> ${HOME}/.adaenv; source ${HOME}/.adaenv
+echo -e NODE_CONFIG=testnet >> $\{%HOME}/.adaenv; source $\{%HOME}/.adaenv
 ```
 
 #### Create bash variables & add \~/.local/bin to our $PATH 🏃
@@ -455,17 +455,17 @@ You must reload environment files after updating them. Same goes for cardano-nod
 :::
 
 ```bash title=">_ Terminal"
-echo . ~/.adaenv >> ${HOME}/.bashrc
+echo . ~/.adaenv >> $\{%HOME}/.bashrc
 cd .local/bin; echo "export PATH=\"$PWD:\$PATH\"" >> $HOME/.adaenv
-echo export NODE_HOME=${HOME}/pi-pool >> ${HOME}/.adaenv
-echo export NODE_PORT=3003 >> ${HOME}/.adaenv
-echo export NODE_FILES=${HOME}/pi-pool/files >> ${HOME}/.adaenv
-echo export TOPOLOGY='${NODE_FILES}'/'${NODE_CONFIG}'-topology.json >> ${HOME}/.adaenv
-echo export DB_PATH='${NODE_HOME}'/db >> ${HOME}/.adaenv
-echo export CONFIG='${NODE_FILES}'/'${NODE_CONFIG}'-config.json >> ${HOME}/.adaenv
-echo export NODE_BUILD_NUM=$(curl https://hydra.iohk.io/job/Cardano/iohk-nix/cardano-deployment/latest-finished/download/1/index.html | grep -e "build" | sed 's/.*build\/\([0-9]*\)\/download.*/\1/g') >> ${HOME}/.adaenv
-echo export CARDANO_NODE_SOCKET_PATH="${HOME}/pi-pool/db/socket" >> ${HOME}/.adaenv
-source ${HOME}/.bashrc; source ${HOME}/.adaenv
+echo export NODE_HOME=$\{%HOME}/pi-pool >> $\{%HOME}/.adaenv
+echo export NODE_PORT=3003 >> $\{%HOME}/.adaenv
+echo export NODE_FILES=$\{%HOME}/pi-pool/files >> $\{%HOME}/.adaenv
+echo export TOPOLOGY='$\{%NODE_FILES}'/'$\{%NODE_CONFIG}'-topology.json >> $\{%HOME}/.adaenv
+echo export DB_PATH='$\{%NODE_HOME}'/db >> $\{%HOME}/.adaenv
+echo export CONFIG='$\{%NODE_FILES}'/'$\{%NODE_CONFIG}'-config.json >> $\{%HOME}/.adaenv
+echo export NODE_BUILD_NUM=$(curl https://hydra.iohk.io/job/Cardano/iohk-nix/cardano-deployment/latest-finished/download/1/index.html | grep -e "build" | sed 's/.*build\/\([0-9]*\)\/download.*/\1/g') >> $\{%HOME}/.adaenv
+echo export CARDANO_NODE_SOCKET_PATH="$\{%HOME}/pi-pool/db/socket" >> $\{%HOME}/.adaenv
+source $\{%HOME}/.bashrc; source $\{%HOME}/.adaenv
 ```
 
 ### Build Libsodium
@@ -501,18 +501,18 @@ sudo ldconfig; ldconfig -p | grep libsodium
 
 ```bash title=">_ Terminal"
 cd $NODE_FILES
-wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-config.json
-wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-byron-genesis.json
-wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-shelley-genesis.json
-wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-alonzo-genesis.json
-wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-topology.json
+wget -N https://hydra.iohk.io/build/$\{%NODE_BUILD_NUM}/download/1/$\{%NODE_CONFIG}-config.json
+wget -N https://hydra.iohk.io/build/$\{%NODE_BUILD_NUM}/download/1/$\{%NODE_CONFIG}-byron-genesis.json
+wget -N https://hydra.iohk.io/build/$\{%NODE_BUILD_NUM}/download/1/$\{%NODE_CONFIG}-shelley-genesis.json
+wget -N https://hydra.iohk.io/build/$\{%NODE_BUILD_NUM}/download/1/$\{%NODE_CONFIG}-alonzo-genesis.json
+wget -N https://hydra.iohk.io/build/$\{%NODE_BUILD_NUM}/download/1/$\{%NODE_CONFIG}-topology.json
 wget -N https://raw.githubusercontent.com/input-output-hk/cardano-node/master/cardano-submit-api/config/tx-submit-mainnet-config.yaml
 ```
 
-Run the following to modify ${NODE\_CONFIG}-config.json and update TraceBlockFetchDecisions to "true" & listen on all interfaces with Prometheus Node Exporter.
+Run the following to modify $\{%NODE\_CONFIG}-config.json and update TraceBlockFetchDecisions to "true" & listen on all interfaces with Prometheus Node Exporter.
 
 ```bash title=">_ Terminal"
-sed -i ${NODE_CONFIG}-config.json \
+sed -i $\{%NODE_CONFIG}-config.json \
     -e "s/TraceBlockFetchDecisions\": false/TraceBlockFetchDecisions\": true/g" \
     -e "s/127.0.0.1/0.0.0.0/g"
 ```
@@ -520,7 +520,7 @@ sed -i ${NODE_CONFIG}-config.json \
 
 :::info
 
-**Tip for relay nodes**: It's possible to reduce memory and cpu usage by setting "TraceMemPool" to "false" in **{NODE\_CONFIG}-config.json.** This will turn off mempool data in Grafana and gLiveView.sh.
+**Tip for relay nodes**: It's possible to reduce memory and cpu usage by setting "TraceMemPool" to "false" in **\{%NODE\_CONFIG}-config.json.** This will turn off mempool data in Grafana and gLiveView.sh.
 
 :::
 
@@ -534,12 +534,12 @@ The **unofficial** cardano-node, cardano-cli and cardano-submit-api binaries ava
 :::
 
 ```bash title=">_ Terminal"
-cd ${HOME}/tmp
+cd $\{%HOME}/tmp
 wget https://ci.zw3rk.com/build/430108/download/1/aarch64-unknown-linux-musl-cardano-node-1.33.1.zip
 unzip *.zip
-mv cardano-node/cardano-* ${HOME}/.local/bin
+mv cardano-node/cardano-* $\{%HOME}/.local/bin
 rm -r *
-cd ${HOME}
+cd $\{%HOME}
 ```
 
 
@@ -562,28 +562,28 @@ which cardano-submit-api
 Create the systemd unit file and startup script so systemd can manage cardano-node.
 
 ```bash title=">_ Terminal"
-nano ${HOME}/.local/bin/cardano-service
+nano $\{%HOME}/.local/bin/cardano-service
 ```
 
 Paste the following, save & exit.
 
-```bash title="${HOME}/.local/bin/cardano-service"
+```bash title="$\{%HOME}/.local/bin/cardano-service"
 #!/bin/bash
 . /home/ada/.adaenv
 
 ## +RTS -N4 -RTS = Multicore(4)
 cardano-node run +RTS -N4 -RTS \
-  --topology ${TOPOLOGY} \
-  --database-path ${DB_PATH} \
-  --socket-path ${CARDANO_NODE_SOCKET_PATH} \
-  --port ${NODE_PORT} \
-  --config ${CONFIG}
+  --topology $\{%TOPOLOGY} \
+  --database-path $\{%DB_PATH} \
+  --socket-path $\{%CARDANO_NODE_SOCKET_PATH} \
+  --port $\{%NODE_PORT} \
+  --config $\{%CONFIG}
 ```
 
 Allow execution of our new cardano-node service file.
 
 ```bash title=">_ Terminal"
-chmod +x ${HOME}/.local/bin/cardano-service
+chmod +x $\{%HOME}/.local/bin/cardano-service
 ```
 
 Open /etc/systemd/system/cardano-node.service.
@@ -623,15 +623,15 @@ WantedBy= multi-user.target
 Create the systemd unit file and startup script so systemd can manage cardano-submit-api.
 
 ```bash title=">_ Terminal"
-nano ${HOME}/.local/bin/cardano-submit-service
+nano $\{%HOME}/.local/bin/cardano-submit-service
 ```
 
-```bash title="${HOME}/.local/bin/cardano-submit-service"
+```bash title="$\{%HOME}/.local/bin/cardano-submit-service"
 #!/bin/bash
 . /home/ada/.adaenv
 
 cardano-submit-api \
-  --socket-path ${CARDANO_NODE_SOCKET_PATH} \
+  --socket-path $\{%CARDANO_NODE_SOCKET_PATH} \
   --port 8090 \
   --config /home/ada/pi-pool/files/tx-submit-mainnet-config.yaml \
   --listen-address 0.0.0.0 \
@@ -641,7 +641,7 @@ cardano-submit-api \
 Allow execution of our new cardano-submit-api service script.
 
 ```bash title=">_ Terminal"
-chmod +x ${HOME}/.local/bin/cardano-submit-service
+chmod +x $\{%HOME}/.local/bin/cardano-submit-service
 ```
 
 Create /etc/systemd/system/cardano-submit.service.
@@ -687,16 +687,16 @@ sudo systemctl daemon-reload
 Let's add a couple functions to the bottom of our .adaenv file to make life a little easier.
 
 ```bash title=">_ Terminal"
-nano ${HOME}/.adaenv
+nano $\{%HOME}/.adaenv
 ```
 
-```bash title="${HOME}/.adaenv"
-cardano-service() {
+```bash title="$\{%HOME}/.adaenv"
+cardano-service() \{%
     #do things with parameters like $1 such as
     sudo systemctl "$1" cardano-node.service
 }
 
-cardano-submit() {
+cardano-submit() \{%
     #do things with parameters like $1 such as
     sudo systemctl "$1" cardano-submit.service
 }
@@ -705,7 +705,7 @@ cardano-submit() {
 Save & exit.
 
 ```bash title=">_ Terminal"
-source ${HOME}/.adaenv
+source $\{%HOME}/.adaenv
 ```
 
 What we just did there was add a couple functions to control our cardano-service and cardano-submit without having to type out
@@ -803,12 +803,12 @@ Add a line sourcing our .adaenv file to the top of the env file and adjust some 
 
 ```bash title=">_ Terminal"
 sed -i env \
-    -e "/#CNODEBIN/i. ${HOME}/.adaenv" \
-    -e "s/\#CNODE_HOME=\"\/opt\/cardano\/cnode\"/CNODE_HOME=\"\${HOME}\/pi-pool\"/g" \
-    -e "s/\#CNODE_PORT=6000"/CNODE_PORT=\"'${NODE_PORT}'\""/g" \
-    -e "s/\#CONFIG=\"\${CNODE_HOME}\/files\/config.json\"/CONFIG=\"\${NODE_FILES}\/"'${NODE_CONFIG}'"-config.json\"/g" \
-    -e "s/\#TOPOLOGY=\"\${CNODE_HOME}\/files\/topology.json\"/TOPOLOGY=\"\${NODE_FILES}\/"'${NODE_CONFIG}'"-topology.json\"/g" \
-    -e "s/\#LOG_DIR=\"\${CNODE_HOME}\/logs\"/LOG_DIR=\"\${CNODE_HOME}\/logs\"/g"
+    -e "/#CNODEBIN/i. $\{%HOME}/.adaenv" \
+    -e "s/\#CNODE_HOME=\"\/opt\/cardano\/cnode\"/CNODE_HOME=\"\$\{%HOME}\/pi-pool\"/g" \
+    -e "s/\#CNODE_PORT=6000"/CNODE_PORT=\"'$\{%NODE_PORT}'\""/g" \
+    -e "s/\#CONFIG=\"\$\{%CNODE_HOME}\/files\/config.json\"/CONFIG=\"\$\{%NODE_FILES}\/"'$\{%NODE_CONFIG}'"-config.json\"/g" \
+    -e "s/\#TOPOLOGY=\"\$\{%CNODE_HOME}\/files\/topology.json\"/TOPOLOGY=\"\$\{%NODE_FILES}\/"'$\{%NODE_CONFIG}'"-topology.json\"/g" \
+    -e "s/\#LOG_DIR=\"\$\{%CNODE_HOME}\/logs\"/LOG_DIR=\"\$\{%CNODE_HOME}\/logs\"/g"
 ```
 
 Allow execution of gLiveView.sh.
@@ -881,16 +881,16 @@ PATH=/home/ada/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
 33 * * * * . $HOME/.adaenv; $HOME/pi-pool/scripts/topologyUpdater.sh
 ```
 
-After four hours you can open ${NODE\_CONFIG}-topology.json and inspect the list of out peers the service suggested for you. Remove anything more than 7k distance(or less). IOHK recently suggested 8 out peers. The more out peers the more system resources it uses. You can also add any peers you wish to connect to manualy inside the script. This is where you would add your block producer or any friends nodes.
+After four hours you can open $\{%NODE\_CONFIG}-topology.json and inspect the list of out peers the service suggested for you. Remove anything more than 7k distance(or less). IOHK recently suggested 8 out peers. The more out peers the more system resources it uses. You can also add any peers you wish to connect to manualy inside the script. This is where you would add your block producer or any friends nodes.
 
 ```bash title=">_ Terminal"
-nano $NODE_FILES/${NODE_CONFIG}-topology.json
+nano $NODE_FILES/$\{%NODE_CONFIG}-topology.json
 ```
 
 
 :::info
 
-You can use gLiveView.sh to view ping times in relation to the peers in your {NODE\_CONFIG}-topology file. Use Ping to resolve hostnames to IP's.
+You can use gLiveView.sh to view ping times in relation to the peers in your \{%NODE\_CONFIG}-topology file. Use Ping to resolve hostnames to IP's.
 
 :::
 
@@ -1065,13 +1065,13 @@ sudo systemctl start grafana-server.service
 Open .adaenv.
 
 ```bash title=">_ Terminal"
-cd ${HOME}; nano .adaenv
+cd $\{%HOME}; nano .adaenv
 ```
 
 Down at the bottom add.
 
-```bash title="${HOME}/.adaenv"
-cardano-monitor() {
+```bash title="$\{%HOME}/.adaenv"
+cardano-monitor() \{%
     #do things with parameters like $1 such as
     sudo systemctl "$1" prometheus.service
     sudo systemctl "$1" prometheus-node-exporter.service
@@ -1114,12 +1114,12 @@ Replace contents of the file with below.
 ```bash title="/etc/nginx/sites-available/default"
 # Default server configuration
 #
-server {
+server \{%
         listen 80 default_server;
         return 301 https://$host$request_uri;
 }
 
-server {
+server \{%
         # SSL configuration
         #
         listen 443 ssl default_server;
@@ -1137,7 +1137,7 @@ server {
         include snippets/snakeoil.conf;
 
         add_header X-Proxy-Cache $upstream_cache_status;
-        location / {
+        location / \{%
           proxy_pass http://127.0.0.1:5000;
           proxy_redirect      off;
           include proxy_params;

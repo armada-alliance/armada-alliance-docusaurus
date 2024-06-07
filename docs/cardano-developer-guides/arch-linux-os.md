@@ -47,13 +47,13 @@ Log out and back in as your new user with SSH. Test sudo by upgrading the system
 sudo pacman -Syu
 ```
 
-{% hint style="info" %}
+\{% hint style="info" %}
 The Arch Bash shell is boring. Optionally install [Bash-it](https://bash-it.readthedocs.io/en/latest/installation/) for a fancy shell.
-{% endhint %}
+\{% endhint %}
 
-{% hint style="warning" %}
+\{% hint style="warning" %}
 Remember to copy your ssh key and disable password aurthentication in sshd_config.
-{% endhint %}
+\{% endhint %}
 
 ## Bash completion
 Add 'complete -cf sudo' to the bottom of .bash_profile and source.
@@ -135,9 +135,9 @@ leapsectz right/UTC
 local stratum 10
 ```
 
-{% hint style="warning" %}
+\{% hint style="warning" %}
 Note: systemd-timesyncd.service is in conflict with chronyd, so you need to disable it first if you want to enable chronyd properly.
-{% endhint %}
+\{% endhint %}
 
 
 ```bash
@@ -374,9 +374,9 @@ cat /etc/security/limits.conf
 ```
 ## Choose testnet or mainnet.
 
-{% hint style="danger" %}
+\{% hint style="danger" %}
 There is a 500 ₳ Registration deposit and another 5 ₳ in registration costs to start a pool on mainnet. First time users are strongly reccomended to use testnet. You can get tada (test ada) from the testnet faucet. [tada faucet link](https://testnets.cardano.org/en/testnets/cardano/tools/faucet/)
-{% endhint %}
+\{% endhint %}
 
 Create the directories for our project.
 
@@ -397,13 +397,13 @@ echo -e NODE_CONFIG=testnet >> ${HOME}/.adaenv; source ${HOME}/.adaenv
 
 ### Create bash variables & add \~/.local/bin to our $PATH 🏃
 
-{% hint style="info" %}
+\{% hint style="info" %}
 [Environment Variables in Linux/Unix](https://askubuntu.com/questions/247738/why-is-etc-profile-not-invoked-for-non-login-shells/247769#247769).
-{% endhint %}
+\{% endhint %}
 
-{% hint style="warning" %}
+\{% hint style="warning" %}
 You must reload environment files after updating them. Same goes for cardano-node, changes to the topology or config files require a cardano-service restart.
-{% endhint %}
+\{% endhint %}
 
 ```bash
 echo . ~/.adaenv >> ${HOME}/.bashrc
@@ -431,7 +431,7 @@ wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-
 wget -N https://raw.githubusercontent.com/input-output-hk/cardano-node/master/cardano-submit-api/config/tx-submit-mainnet-config.yaml
 ```
 
-Run the following to modify ${NODE\_CONFIG}-config.json and update TraceBlockFetchDecisions to "true" & listen on all interfaces with Prometheus Node Exporter.
+Run the following to modify $\{NODE\_CONFIG}-config.json and update TraceBlockFetchDecisions to "true" & listen on all interfaces with Prometheus Node Exporter.
 
 ```bash
 sed -i ${NODE_CONFIG}-config.json \
@@ -786,7 +786,7 @@ http://<node lan ip>:8090/api/submit/tx
 
 Guild operators scripts has a couple useful tools for operating a pool. We do not want the project as a whole, though there are a couple scripts we are going to use.
 
-{% embed url="https://github.com/cardano-community/guild-operators/tree/master/scripts/cnode-helper-scripts" %}
+\{% embed url="https://github.com/cardano-community/guild-operators/tree/master/scripts/cnode-helper-scripts" %}
 
 ```bash
 cd $NODE_HOME/scripts
@@ -794,7 +794,7 @@ wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh
 ```
 
-{% hint style="info" %}
+\{% hint style="info" %}
 You can change the port cardano-node runs on in the .adaenv file in your home directory. Open the file edit the port number. Load the change into your shell & restart the cardano-node service.
 
 ```bash
@@ -802,7 +802,7 @@ nano /home/ada/.adaenv
 source /home/ada/.adaenv
 cardano-service restart
 ```
-{% endhint %}
+\{% endhint %}
 
 Add a line sourcing our .adaenv file to the top of the env file and adjust some paths.
 
@@ -842,9 +842,9 @@ sudo systemctl start cronie.service
 
 Until peer to peer is enabled on the network operators need a way to get a list of relays/peers to connect to. The topology updater service runs in the background with cron. Every hour the script will run and tell the service you are a relay and want to be a part of the network. It will add your relay to it's directory after four hours you should see in connections in gLiveView.
 
-{% hint style="info" %}
+\{% hint style="info" %}
 The list generated will show you the distance & a clue as to where the relay is located.
-{% endhint %}
+\{% endhint %}
 
 Download the topologyUpdater script and have a look at it. Here is where you will enter your block producer or any other custom peers you would like to always be connected to.
 
@@ -862,9 +862,9 @@ Save, exit and make it executable.
 chmod +x topologyUpdater.sh
 ```
 
-{% hint style="warning" %}
+\{% hint style="warning" %}
 You will not be able to successfully execute ./topologyUpdater.sh until you are fully synced up to the tip of the chain.
-{% endhint %}
+\{% endhint %}
 
 Create a cron job that will run once an hour.
 
@@ -883,9 +883,9 @@ SHELL=/bin/bash
 nano $NODE_FILES/${NODE_CONFIG}-topology.json
 ```
 
-{% hint style="info" %}
-You can use gLiveView.sh to view ping times in relation to the peers in your {NODE\_CONFIG}-topology file. Use Ping to resolve hostnames to IP's.
-{% endhint %}
+\{% hint style="info" %}
+You can use gLiveView.sh to view ping times in relation to the peers in your \{NODE\_CONFIG}-topology file. Use Ping to resolve hostnames to IP's.
+\{% endhint %}
 
 Changes to this file will take affect upon restarting the cardano-service.
 
