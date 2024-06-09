@@ -98,7 +98,7 @@ The Arch Bash shell is boring. Optionally install [Bash-it](https://bash-it.read
 Add 'complete -cf sudo' to the bottom of .bash_profile and source.
 
 ```bash title=">_ Terminal"
-echo complete -cf sudo >> ${HOME}/.bash_profile; . $HOME/.bash_profile
+echo complete -cf sudo >> $\{%HOME}/.bash_profile; . $HOME/.bash_profile
 ```
 
 ## Locales
@@ -390,7 +390,7 @@ tmpfs    /run/shm    tmpfs    ro,noexec,nosuid    0 0
 Add a couple lines to the bottom of /etc/security/limits.conf
 
 ```bash title=">_ Terminal"
-sudo bash -c "echo -e '${USER} soft nofile 800000\n${USER} hard nofile 1048576\n' >> /etc/security/limits.conf"
+sudo bash -c "echo -e '$\{%USER} soft nofile 800000\n$\{%USER} hard nofile 1048576\n' >> /etc/security/limits.conf"
 ```
 
 Confirm it was added to the bottom.
@@ -412,13 +412,13 @@ It is fairly easy to jump to mainnet when you are ready with the same machine. O
 Create the directories for our project and an environment file to hold our variables.
 
 ```bash title=">_ Terminal"
-mkdir -p ${HOME}/.local/bin
-mkdir -p ${HOME}/pool/files
-mkdir -p ${HOME}/pool/scripts
-mkdir -p ${HOME}/pool/logs
-mkdir ${HOME}/git
-mkdir ${HOME}/tmp
-touch ${HOME}/.adaenv
+mkdir -p $\{%HOME}/.local/bin
+mkdir -p $\{%HOME}/pool/files
+mkdir -p $\{%HOME}/pool/scripts
+mkdir -p $\{%HOME}/pool/logs
+mkdir $\{%HOME}/git
+mkdir $\{%HOME}/tmp
+touch $\{%HOME}/.adaenv
 ```
 
 ### Create bash variables & add \~/.local/bin to our $PATH 🏃
@@ -432,16 +432,16 @@ You must reload environment files after updating them. The same goes for cardano
 :::
 
 ```bash title=">_ Terminal"
-echo . ~/.adaenv >> ${HOME}/.bashrc
+echo . ~/.adaenv >> $\{%HOME}/.bashrc
 cd .local/bin; echo "export PATH=\"$PWD:\$PATH\"" >> $HOME/.adaenv
-echo export NODE_HOME=${HOME}/pool >> ${HOME}/.adaenv
-echo export NODE_PORT=3003 >> ${HOME}/.adaenv
-echo export NODE_FILES=${HOME}/pool/files >> ${HOME}/.adaenv
-echo export TOPOLOGY='${NODE_FILES}'/topology.json >> ${HOME}/.adaenv
-echo export DB_PATH='${NODE_HOME}'/db >> ${HOME}/.adaenv
-echo export CONFIG='${NODE_FILES}'/config.json >> ${HOME}/.adaenv
-echo export CARDANO_NODE_SOCKET_PATH="${HOME}/pool/db/socket" >> ${HOME}/.adaenv
-source ${HOME}/.bashrc; source ${HOME}/.adaenv
+echo export NODE_HOME=$\{%HOME}/pool >> $\{%HOME}/.adaenv
+echo export NODE_PORT=3003 >> $\{%HOME}/.adaenv
+echo export NODE_FILES=$\{%HOME}/pool/files >> $\{%HOME}/.adaenv
+echo export TOPOLOGY='$\{%NODE_FILES}'/topology.json >> $\{%HOME}/.adaenv
+echo export DB_PATH='$\{%NODE_HOME}'/db >> $\{%HOME}/.adaenv
+echo export CONFIG='$\{%NODE_FILES}'/config.json >> $\{%HOME}/.adaenv
+echo export CARDANO_NODE_SOCKET_PATH="$\{%HOME}/pool/db/socket" >> $\{%HOME}/.adaenv
+source $\{%HOME}/.bashrc; source $\{%HOME}/.adaenv
 ```
 
 ### Retrieve node files
@@ -537,16 +537,16 @@ Add this.
 ```
 
 prefix=/usr/local
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
-includedir=${prefix}/include
+exec_prefix=$\{%prefix}
+libdir=$\{%exec_prefix}/lib
+includedir=$\{%prefix}/include
 
 Name: libblst
 Description: Multilingual BLS12-381 signature library
 URL: https://github.com/supranational/blst
 Version: 0.3.10
-Cflags: -I${includedir}
-Libs: -L${libdir} -lblst
+Cflags: -I$\{%includedir}
+Libs: -L$\{%libdir} -lblst
 
 ```
 
@@ -555,7 +555,7 @@ Copy other files into place.
 ```bash title=">_ Terminal"
 sudo cp bindings/blst_aux.h bindings/blst.h bindings/blst.hpp  /usr/local/include/
 sudo cp libblst.a /usr/local/lib
-sudo chmod u=rw,go=r /usr/local/{lib/{libblst.a,pkgconfig/libblst.pc},include/{blst.{h,hpp},blst_aux.h}}
+sudo chmod u=rw,go=r /usr/local/\{%lib/\{%libblst.a,pkgconfig/libblst.pc},include/\{%blst.\{%h,hpp},blst_aux.h}}
 ```
 
 ## LLVM 12.0.1
@@ -651,28 +651,28 @@ cardano-cli version
 Create the startup script and systemd unit file so systemd can manage cardano-node.
 
 ```bash title=">_ Terminal"
-nano ${HOME}/.local/bin/cardano-service
+nano $\{%HOME}/.local/bin/cardano-service
 ```
 
 Edit the username here if you chose to not use ada. Paste the following, save & exit.
 
-```bash title="${HOME}/.local/bin/cardano-service"
+```bash title="$\{%HOME}/.local/bin/cardano-service"
 #!/bin/bash
 . /home/ada/.adaenv
 
 ## +RTS -N6 -RTS = Multicore(4)
 cardano-node run +RTS -N6 -RTS \
-  --topology ${TOPOLOGY} \
-  --database-path ${DB_PATH} \
-  --socket-path ${CARDANO_NODE_SOCKET_PATH} \
-  --port ${NODE_PORT} \
-  --config ${CONFIG}
+  --topology $\{%TOPOLOGY} \
+  --database-path $\{%DB_PATH} \
+  --socket-path $\{%CARDANO_NODE_SOCKET_PATH} \
+  --port $\{%NODE_PORT} \
+  --config $\{%CONFIG}
 ```
 
 Allow execution of our new cardano-node startup script.
 
 ```bash title=">_ Terminal"
-chmod +x ${HOME}/.local/bin/cardano-service
+chmod +x $\{%HOME}/.local/bin/cardano-service
 ```
 
 Open /etc/systemd/system/cardano-node.service.
@@ -718,16 +718,16 @@ sudo systemctl daemon-reload
 Let's add a couple functions to the bottom of our .adaenv file to make life a little easier.
 
 ```bash title=">_ Terminal"
-nano ${HOME}/.adaenv
+nano $\{%HOME}/.adaenv
 ```
 
-```bash title="${HOME}/.adaenv"
-cardano-service() {
+```bash title="$\{%HOME}/.adaenv"
+cardano-service() \{%
     #do things with parameters like $1 such as
     sudo systemctl "$1" cardano-node.service
 }
 
-cardano-monitor() {
+cardano-monitor() \{%
     #do things with parameters like $1 such as
     sudo systemctl "$1" prometheus.service
     sudo systemctl "$1" prometheus-node-exporter.service
@@ -737,7 +737,7 @@ cardano-monitor() {
  Source these changes into your surrent shell.
  
 ```bash title=">_ Terminal"
-source ${HOME}/.adaenv
+source $\{%HOME}/.adaenv
 ```
 
 What we just did there was added a couple functions to control our cardano-service and cardano-submit without having to type out
@@ -762,7 +762,7 @@ Now we just have to:
 
 Guild operators scripts has a couple useful tools for operating a pool. We do not want the project as a whole, though there are a couple scripts we are going to use.
 
-{% embed url="https://github.com/cardano-community/guild-operators/tree/master/scripts/cnode-helper-scripts" %}
+\{%% embed url="https://github.com/cardano-community/guild-operators/tree/master/scripts/cnode-helper-scripts" %}
 
 ```bash title=">_ Terminal"
 cd $NODE_HOME/scripts
@@ -775,8 +775,8 @@ wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/
 You can change the port cardano-node runs on in the .adaenv file in your home directory. Open the file edit the port number. Load the change into your shell & restart the cardano-node service.
 
 ```bash title=">_ Terminal"
-nano ${HOME}/.adaenv
-source ${HOME}/.adaenv
+nano $\{%HOME}/.adaenv
+source $\{%HOME}/.adaenv
 cardano-service restart
 ```
 :::
@@ -785,12 +785,12 @@ Add a line sourcing our .adaenv file to the top of the env file and adjust some 
 
 ```bash title=">_ Terminal"
 sed -i env \
-    -e "/#CNODEBIN/i. ${HOME}/.adaenv" \
-    -e "s/\#CNODE_HOME=\"\/opt\/cardano\/cnode\"/CNODE_HOME=\"\${HOME}\/pool\"/g" \
-    -e "s/\#CNODE_PORT=6000"/CNODE_PORT=\"'${NODE_PORT}'\""/g" \
-    -e "s/\#CONFIG=\"\${CNODE_HOME}\/files\/config.json\"/CONFIG=\"\${NODE_FILES}\/config.json\"/g" \
-    -e "s/\#TOPOLOGY=\"\${CNODE_HOME}\/files\/topology.json\"/TOPOLOGY=\"\${NODE_FILES}\/topology.json\"/g" \
-    -e "s/\#LOG_DIR=\"\${CNODE_HOME}\/logs\"/LOG_DIR=\"\${CNODE_HOME}\/logs\"/g"
+    -e "/#CNODEBIN/i. $\{%HOME}/.adaenv" \
+    -e "s/\#CNODE_HOME=\"\/opt\/cardano\/cnode\"/CNODE_HOME=\"\$\{%HOME}\/pool\"/g" \
+    -e "s/\#CNODE_PORT=6000"/CNODE_PORT=\"'$\{%NODE_PORT}'\""/g" \
+    -e "s/\#CONFIG=\"\$\{%CNODE_HOME}\/files\/config.json\"/CONFIG=\"\$\{%NODE_FILES}\/config.json\"/g" \
+    -e "s/\#TOPOLOGY=\"\$\{%CNODE_HOME}\/files\/topology.json\"/TOPOLOGY=\"\$\{%NODE_FILES}\/topology.json\"/g" \
+    -e "s/\#LOG_DIR=\"\$\{%CNODE_HOME}\/logs\"/LOG_DIR=\"\$\{%CNODE_HOME}\/logs\"/g"
 ```
 
 Allow execution of gLiveView.sh.
@@ -875,8 +875,8 @@ nano $HOME/custom-metrics/peers_in.sh
 Add following, update port # to match cardano-node port.
 
 ```bash title=">_ Terminal"
-INCOMING_PEERS="$(ss -tnp state established | grep "cardano-node" | awk -v port=":3003" '$3 ~ port {print}' | wc -l)"
-echo "peers_in ${INCOMING_PEERS}" > /home/ada/custom-metrics/tmp/peers_in.prom.tmp
+INCOMING_PEERS="$(ss -tnp state established | grep "cardano-node" | awk -v port=":3003" '$3 ~ port \{%print}' | wc -l)"
+echo "peers_in $\{%INCOMING_PEERS}" > /home/ada/custom-metrics/tmp/peers_in.prom.tmp
 mv /home/ada/custom-metrics/tmp/peers_in.prom.tmp /var/lib/node_exporter/peers_in.prom
 ```
 Make it executable.
@@ -930,7 +930,7 @@ Add following. Replace ada with your username here if different.
 
 ```bash title=">_ Terminal"
 UPDATES="$(/usr/bin/checkupdates | wc -l)"
-echo "pacman_upgrades_pending ${UPDATES}" > /home/ada/custom-metrics/tmp/pacman_upgrades_pending.prom.tmp
+echo "pacman_upgrades_pending $\{%UPDATES}" > /home/ada/custom-metrics/tmp/pacman_upgrades_pending.prom.tmp
 mv /home/ada/custom-metrics/tmp/pacman_upgrades_pending.prom.tmp /var/lib/node_exporter/pacman_upgrades_pending.prom
 ```
 

@@ -110,6 +110,7 @@ Note: sudo is super user do (admin privileges). Nano is command line to touch an
 
 Copy and paste the contents of the [Reference ergo.conf example file](./example_ergo_config_file.md) into a separate text file:
 
+```yaml
     ergo {
         node {
             mining = false
@@ -151,6 +152,7 @@ Copy and paste the contents of the [Reference ergo.conf example file](./example_
             # nodeName = "my-ergo-node"
         }
     }
+```
 
 You'll need to make the following updates:
 - extraIndex ?: If true, will basically store extra blockchain data

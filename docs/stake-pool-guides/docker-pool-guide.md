@@ -46,6 +46,12 @@ sudo mkdir -p node/db && sudo mkdir -p node/files && sudo mkdir -p dockerfiles/f
 
 The files to build the docker images will be downloaded from [MINI1 pool GitHub](https://github.com/jterrier84/Cardano-node-docker)
 
+:::caution
+
+⚠️ If there's a newer version of the cardano-node released, you may have to fork and manually update jterrier84's Cardano-node-docker repo (build.sh and run.sh files) -- Or open an Issue.
+
+:::
+
 ```bash title=">_ Terminal"
 cd dockerfiles
 sudo wget -N https://raw.githubusercontent.com/jterrier84/Cardano-node-docker/master/dockerfiles/armada-cn-arm64.dockerfile

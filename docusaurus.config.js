@@ -20,7 +20,7 @@ module.exports = {
     colorMode: {
       defaultMode: "dark",
       disableSwitch: false,
-      respectPrefersColorScheme: true,
+      respectPrefersColorScheme: false,
     },
     docs: {
       sidebar: {
@@ -28,9 +28,7 @@ module.exports = {
       },
     },
     image: "https://armada-alliance.com/img/armada-alliance-logo.png",
-    prism: {
-      theme: require("prism-react-renderer/themes/nightOwl"),
-    },
+    
     algolia: {
       // The application ID provided by Algolia
       appId: process.env.ALGOLIA_APP_ID,
@@ -42,9 +40,6 @@ module.exports = {
 
       // Optional: see doc section below
       contextualSearch: true,
-
-      // Optional: Specify domains where the navigation should occur through window.location instead on history.push. Useful when our Algolia config crawls multiple documentation sites and we want to navigate with window.location.href to them.
-      externalUrlRegex: 'external\\.com|domain\\.com',
 
       // Optional: Algolia search parameters
       searchParameters: {},

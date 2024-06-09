@@ -5,13 +5,6 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 
-:::caution
-You will have to upgrade the whole pool to P2P in my experience. I could not get tx's out of my core until it had p2p enabled.
-:::
-
-:::info
-Gossip now renamed to Peer Sharing is still disabled(1.35.6).
-
 Relays not registered on chain will not be discovered. The latest topology updater detects if P2P is enabled and will disable fetching a new list. Continue pushing your relay to topology updater without pulling in a list from them. This allows you to get incoming while keeping the p2p topology file as is on unregistered relays.
 
 :::
@@ -22,6 +15,7 @@ Edit your mainnet-config.json. I add them just above ***"defaultBackends": [***.
 
 ```bash title="mainnet-config.json"
   "EnableP2P": true,
+  "PeerSharing": true,
   "TargetNumberOfRootPeers": 100,
   "TargetNumberOfKnownPeers": 100,
   "TargetNumberOfEstablishedPeers": 50,

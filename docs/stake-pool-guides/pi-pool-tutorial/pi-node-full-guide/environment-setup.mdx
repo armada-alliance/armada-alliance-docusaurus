@@ -522,7 +522,7 @@ PATH=/home/ada/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
 33 * * * * . $HOME/.adaenv; $HOME/pi-pool/scripts/topologyUpdater.sh
 ```
 
-After four hours you can open ${NODE_CONFIG}-topology.json and inspect the list of out peers the service suggested for you. Remove anything more than 7k distance(or less). IOHK recently suggested 8 out peers. The more out peers the more system resources it uses. You can also add any peers you wish to connect to manualy inside the script. This is where you would add your block producer or any friends nodes.
+After four hours you can open $\{NODE_CONFIG}-topology.json and inspect the list of out peers the service suggested for you. Remove anything more than 7k distance(or less). IOHK recently suggested 8 out peers. The more out peers the more system resources it uses. You can also add any peers you wish to connect to manualy inside the script. This is where you would add your block producer or any friends nodes.
 
 ```bash title=">_ Terminal"
 nano $NODE_FILES/${NODE_CONFIG}-topology.json
@@ -530,7 +530,7 @@ nano $NODE_FILES/${NODE_CONFIG}-topology.json
 
 :::info
 
-You can use gLiveView.sh to view ping times in relation to the peers in your {NODE_CONFIG}-topology file. Use Ping to resolve hostnames to IP's.
+You can use gLiveView.sh to view ping times in relation to the peers in your $\{NODE_CONFIG}-topology file. Use Ping to resolve hostnames to IP's.
 
 :::
 
@@ -623,7 +623,7 @@ global:
 # Here it's Prometheus itself.
 scrape_configs:
   # The job name is added as a label job=<job_name> to any timeseries scraped from this config.
-  - job_name: "Prometheus" # To scrape data from Prometheus Node Exporter
+  - job_name: "prometheus" # To scrape data from Prometheus Node Exporter
     scrape_interval: 5s
     static_configs:
       #      - targets: ['<CORE PRIVATE IP>:12798']

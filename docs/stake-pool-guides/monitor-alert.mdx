@@ -1,0 +1,346 @@
+---
+description: Securing Stakepool Connections & Monitoring within a VPN, Prometheus & Grafana Metrics, Alerting to Telegram 
+---
+
+# Securing Stakepool Connections & Monitoring with Tailscale
+
+This guide will demonstrate how to use [Tailscale](https://tailscale.com) to manage a [WireGuard](https://www.wireguard.com/) VPN, securely connecting your
+block producer and relays. You will learn to scrape data with [Prometheus](https://prometheus.io/) and display it using [Grafana](https://grafana.com/)
+within the VPN, without the need to manage TLS certificates or opening any ports except the public ports for your relays.
+
+Additionally, the guide covers setting up Grafana [alerts](https://grafana.com/docs/grafana/latest/alerting/) and configuring
+[notifications](https://grafana.com/docs/grafana/latest/alerting/configure-notifications/) to be sent to a Telegram bot.
+This bot can then be added to a Telegram group for real-time alerting.
+
+![](/img/catallyst-5node-dashboard.png)
+
+
+:::info
+More information on the various [notification contact points](https://grafana.com/docs/grafana/latest/alerting/configure-notifications/manage-contact-points/)
+supported by Grafana, including Telegram, Email, Discord, and others.
+:::
+
+:::tip
+It is best to have Grafana and Prometheus on their own dedicated machine outside of the block producers local network or set them up on a relay looking in.
+This way you can be alerted if the BP loses connectivity.
+
+You can also have several instances of Grafana on different machines using the same Prometheus data source. I do this so I can always have Grafana locally for my
+viewing pleasure. It loads a lot faster when it's local 😎. Alerting only needs to be setup on the one looking in.
+:::
+
+## Creating a Tailscale VPN
+
+Head over to the [Tailscale quick start page](https://tailscale.com/kb/1017/install), create an account and start adding machines.
+Start by adding your local machine or laptop. It is very easy to install Tailscale on your machines just follow the instructions. You can also install it on your phone
+to view dashboard on the go.
+
+This guide will also make your block producer "portable". Meaning you can connect your block producer to the internet from anywhere and it will instantly 
+reestablish communication with your relays without further configuration ⚡.
+
+### Adding Machines
+
+Follow the instructions for adding the nodes that make up your pool and a machine to host Grafana. This does not have to be a separate machine, 
+though as mentioned above, it's preferable to have it looking in at the block producer. This way, if the BP goes offline, you will still be able to receive alerts.
+
+Installing Tailscale on Ubuntu is just running the below script then visiting the link that is output to terminal and authorizing the machine on the Tailscale website.
+
+```bash
+curl -fsSL https://tailscale.com/install.sh | sh
+```
+
+You will see a new `tailscale0` network interface added to each machine. You can control traffic to these interfaces
+with iptables, UFW, or Firewalld on the `tailscale0` interface. Additionally, you can use Tailscale's ACL feature to group machines and control which
+ports are open between machines in that group.
+
+
+```bash
+ip a
+```
+
+### Disable Key Expiry
+
+:::caution
+Failure to disable key expiry will knock your pool offline when they expire after 90 days. Don't skip this step. You have been warned.
+:::
+
+Once the machines are added you should disable key expiry on each machine or the keys used to connect to the VPN will expire after 90 days and those
+nodes will be unable to connect. You can do this on the [Tailscale](https://tailscale.com) website by clicking the ... for each machine and choosing 'Disable key expiry'.
+You can always generate new keys at any time if you wish. If you do get locked out you can toggle the expiry on the website and restart the server to get back into it.
+
+### Access Control layer
+
+Click the 'Access controls' tab on the [Tailscale](https://tailscale.com) website. By default there is a rule to allow all traffic on all ports between the machines in the tailnet.
+This is fine to get started but know you have the ability to group machines and only allow certain ports to communicate through the VPN to machines in that group.
+For example I have a mainnet and a testnet group and only allow the ports needed for those machines.
+
+```json
+        // my laptop does what it wants
+		{"action": "accept", "src": ["tag:kingOfKings"], "dst": ["*:*"]},
+		{
+			"action": "accept",
+			"src":    ["autogroup:members"],
+			"dst":    ["autogroup:internet:*"],
+		},
+		{ // mainnet machines can communicate on said ports
+			"action": "accept",
+			"src":    ["tag:cardano-mainnet"],
+			"dst": ["tag:cardano-mainnet:6000-6003,9090,5000,12798,12800,9100,9190,3000,1337,9615"],
+		},
+		{ // testnet machines can communicate on said ports
+			"action": "accept",
+			"src":    ["tag:cardano-testnets"],
+			"dst":    ["tag:cardano-preview:3000-3003,9090,5000,12798,12800,9100,22"],
+		}
+```
+
+This is just an example of what my groups look like. Consult the documentation on ACL when you are ready to tighten up access.
+Be aware that ports are closed by default and that one default rule is what is allowing communication for all machines on all ports.
+
+### Update cardano-node topology files.
+
+You can get a list of the machine names, IP address' and some other connection info of the machines in your 'tailnet' from their website or by running..
+
+```bash
+sudo tailscale status
+```
+
+:::tip
+You can remove HOSTADDR=0.0.0.0 entirely from your cardano-node startup script(if present) to enable connections using Tailscale's IPv6 address'. cardano-node will
+use both IPv4 and IPv6 if that line is not present.
+:::
+
+Let's test communication. When you setup Tailscale it creates a nameserver that the VPN can use to resolve machine hostnames to their VPN IP address.
+You should be able to ping or SSH to the IPv4, IPv6 address or machine name of a node from other machines in the VPN. You can also use cardano-cli to test
+they can connect before editing your topology files.
+
+```bash
+cardano-cli ping -h <Tailscale IP or Tailscale DNS name> -p <port>
+```
+
+Test this out on each machine. You can then go in to your cardano-node topology file and update all the address to their Tailscale IP. 
+
+#### Example with block producer & backup block producer in localRoots using the tailscale0 interface IPv4.
+
+```json  
+    "localRoots": [
+    { "accessPoints": [
+      { "address": "100.90.109.57", "port": 6000, "name": "My core" },
+      { "address": "100.118.76.131", "port": 6000, "name": "Backup core" }
+      ],
+      "advertise": false,
+      "trustable": true,
+      "valency": 2
+    },
+    ]
+```
+
+## Monitoring
+
+We first need to tell cardano-node to have the metrics available to all interfaces and not just localhost. This way Prometheus will be able to access the
+metrics when Prometheus is on another machine. Open cardano-node's config.json and update the hasPrometheus section like this. Do this for all the
+machines running cardano-node. Keep in mind you'll need to do this every time you pull in a new config.json when upgrading.
+
+```json
+  "hasPrometheus": [
+    "0.0.0.0",
+    12798
+  ],
+```
+
+Next make sure you have prometheus-node-exporter installed on every machine you plan to add to the dashboard.
+
+```bash title=">_ Terminal"
+sudo apt install prometheus-node-exporter
+sudo systemctl enable prometheus-node-exporter.service
+```
+
+### Prometheus & Grafana
+
+Prometheus scrapes data from cardano-node and the Linux host with node exporter and serves the scraped metrics over http. Grafana in turn can use that data to
+display graphs and create alerts etc. Our Grafana dashboard will be made up of data from our Ubuntu system(prometheus-node-exporter) & cardano-node.
+
+:::info PROMETHEUS REPOSITORY
+
+[https://github.com/prometheus](https://github.com/prometheus)
+
+:::
+
+![](/img/pi-pool-grafana.png)
+
+### Install Prometheus.
+
+```bash title=">_ Terminal"
+sudo apt install prometheus
+```
+
+### Configure Prometheus
+
+Open prometheus.yml.
+
+```bash title=">_ Terminal"
+sudo nano /etc/prometheus/prometheus.yml
+```
+
+:::caution
+
+Indentation must be correct YAML format or Prometheus will fail to start.
+
+:::
+
+Replace the contents of the file with below make sure you fill in the Tailscale ipv4 address for each machine twice. Once for cardano-node metrics and
+then again for prometheus node exporter metrics. Which is just server metrics like RAM, CPU etc.
+
+:::info
+If you have other machines or services you would like to add to your dashboard you can add them here. Mithril, Aya devnet, testnets etc.
+:::
+
+```yaml title="/etc/prometheus/prometheus.yml"
+global:
+  scrape_interval:     5s # By default, scrape targets every 15 seconds.
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: 'codelab-monitor'
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label job=<job_name> to any timeseries scraped from this config.
+  - job_name: 'prometheus' # To scrape data from the cardano node
+    scrape_interval: 5s
+    static_configs:
+
+    # cardano-node metrics
+
+      - targets: ['<primary core ip addr>:12798']
+        labels:
+          alias: 'C1'
+          type:  'cardano-node'
+
+      - targets: ['<backup core ip addr>:12798']
+        labels:
+          alias: 'C2'
+          type:  'cardano-node'
+
+      - targets: ['<relay 1 ip addr>:12798']
+        labels:
+          alias: 'R1'
+          type:  'cardano-node'
+
+      - targets: ['<relay 2 ip addr>:12798']
+        labels:
+          alias: 'R2'
+          type:  'cardano-node'
+
+      - targets: ['<relay 3 ip addr>:12798']
+        labels:
+          alias: 'R3'
+          type:  'cardano-node'
+
+    # prometheus node exporter metrics
+
+      - targets: ['<primary core ip addr>:9100']
+        labels:
+          alias: 'C1'
+          type:  'node'
+
+      - targets: ['<backup core ip addr>:9100']
+        labels:
+          alias: 'C2'
+          type:  'node'
+
+      - targets: ['<relay 1 ip addr>:9100']
+        labels:
+          alias: 'R1'
+          type:  'node'
+
+      - targets: ['<relay 2 ip addr>:9100']
+        labels:
+          alias: 'R2'
+          type:  'node'
+
+      - targets: ['<relay 3 ip addr>:9100']
+        labels:
+          alias: 'R3'
+          type:  'node'
+
+```
+
+Save & exit.
+
+Start Prometheus, you can check if it's running and follow the services logs with.
+
+```bash title=">_ Terminal"
+sudo systemctl start prometheus.service
+sudo systemctl status prometheus.service
+journalctl -u prometheus.service -f
+```
+
+If everything looks good tell Systemd to start the service at boot.
+
+```bash title=">_ Terminal"
+sudo systemctl enable prometheus.service
+```
+
+:::tip
+You can now open the browser on your laptop if Tailscale is installed on it and got to http://prometheus-server-ip:9090
+:::
+
+### Install Grafana
+
+:::info GRAFANA REPOSITORY
+
+[https://github.com/grafana/grafana](https://github.com/grafana/grafana)
+
+:::
+
+Install the prerequisite packages.
+
+```bash
+sudo apt install -y apt-transport-https software-properties-common wget
+```
+
+Import Grafana's gpg key to Ubuntu.
+
+```bash title=">_ Terminal"
+sudo mkdir -p /etc/apt/keyrings/
+wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+```
+
+Add latest stable repo to apt sources.
+
+```bash title=">_ Terminal"
+echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+```
+
+Update your package lists & install Grafana.
+
+```bash title=">_ Terminal"
+sudo apt update; sudo apt install grafana
+```
+
+Optionally, change the port on which Grafana listens to port 5000 to avoid clashes with cardano-node, which commonly uses port 3000.
+
+```bash title=">_ Terminal"
+sudo sed -i /etc/grafana/grafana.ini \
+         -e "s#;http_port#http_port#" \
+         -e "s#3000#5000#"
+```
+
+Start Grafana, you can check if it's running and follow the services logs with.
+
+```bash title=">_ Terminal"
+sudo systemctl start grafana-server.service
+sudo systemctl status grafana-server.service
+journalctl -u grafana-server.service -f
+```
+
+If everything looks good tell Systemd to start the service at boot.
+
+```bash title=">_ Terminal"
+sudo systemctl enable grafana-server.service
+```
+
+## Dashboard/s
+

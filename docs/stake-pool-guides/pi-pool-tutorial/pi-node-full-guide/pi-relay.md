@@ -185,7 +185,7 @@ Save and exit.
 
 ## 4. Wait for service on boarding (4 hours).
 
-After four hours of on boarding your relay(s) will start to be available to other peers on the network. **topologyUpdater.sh** will create a list in ${NODE_HOME}/logs.
+After four hours of on boarding your relay(s) will start to be available to other peers on the network. **topologyUpdater.sh** will create a list in $\{NODE_HOME}/logs.
 
 ## 5. Prune list of best (8) peers.
 

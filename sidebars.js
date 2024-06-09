@@ -162,7 +162,7 @@ module.exports = {
         "stake-pool-guides/pi-pool-tutorial/update-registration-cert",
         "stake-pool-guides/leader-logs",
         "stake-pool-guides/grafana-alerts-with-telegram",
-        "stake-pool-guides/add-adapools-info-to-grafana",
+
       ],
     },
     {
@@ -175,6 +175,7 @@ module.exports = {
         keywords: ["guides"],
       },
       items: [
+        "stake-pool-guides/monitor-alert",
         "stake-pool-guides/basic-stake-pool-networking",
         "stake-pool-guides/wireguard-guide",
         "stake-pool-guides/p2p-networking",
@@ -198,6 +199,7 @@ module.exports = {
       items: [
         "cardano-developer-guides/nft-native-assets",
         "cardano-developer-guides/cardano-submit-tx-api-tutorial",
+        "stake-pool-guides/ogmios",
         "cardano-developer-guides/create-.img-file",
         "cardano-developer-guides/how-to-delegate-ada",
       ],

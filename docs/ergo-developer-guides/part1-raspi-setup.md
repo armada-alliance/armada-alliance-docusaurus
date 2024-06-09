@@ -73,7 +73,7 @@ However, upon boot up it should connect on your wifi, and from your router page,
 ### Getting into your rpi
 Now this part can be daunting, but let's dive in.
 - Open terminal (use your mac or windows search, type in terminal)
-    - Unfamilar? Youtube "command line terminal tutorial <your_operating_system_here>" (e.g. command line terminal tutorial macos) 
+    - Unfamilar? Youtube "command line terminal tutorial **your_operating_system_here**" (e.g. command line terminal tutorial macos) 
 
 Secure shell into the rpi, if setup correctly this should work.
 ```bash

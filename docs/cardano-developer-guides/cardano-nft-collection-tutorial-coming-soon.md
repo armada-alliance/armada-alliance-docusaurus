@@ -15,7 +15,7 @@
 **If you haven't already, please watch our video from the previous NFT tutorial 😎**
 :::
 
-{% embed url="https://youtu.be/OeOliguGn7Y" %}
+\{% embed url="https://youtu.be/OeOliguGn7Y" %}
 
 ### Clone the cardano-minter repo if you haven't already...
 
@@ -337,7 +337,7 @@ node src/pin-images-to-ipfs.js
 
 **Read the Cardano Documentation on "**[**Scripts**](https://docs.cardano.org/projects/cardano-node/en/latest/reference/simple-scripts.html#Step-1---construct-the-tx-body)**" and/or watch a video we made discussing the subject:**
 
-{% embed url="https://youtu.be/v6q66zcFqew" %}
+\{% embed url="https://youtu.be/v6q66zcFqew" %}
 
 ### 7. Create an "open" or "unlocked" minting policy and script (Optional)
 
