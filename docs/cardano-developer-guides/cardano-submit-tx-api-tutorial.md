@@ -31,11 +31,11 @@ wget -O 8_1_2.zip https://github.com/armada-alliance/cardano-node-binaries/blob/
 Unzip the contents of the zip file.
 
 ```bash title=">_ Terminal"
-unzip 8_1_2.zip -d cardano-node-8.1.2
+unzip 8_1_2.zip -d cardano-node-8.9.3
 ```
 
 ```bash title=">_ Terminal"
-mv cardano-node-8.1.2/cardano-node/cardano-submit-api ~/.local/bin/
+mv cardano-node-8.9.3/cardano-node/cardano-submit-api ~/.local/bin/
 ```
 
 ## Make a simple bash script to run the Cardano Submit API
