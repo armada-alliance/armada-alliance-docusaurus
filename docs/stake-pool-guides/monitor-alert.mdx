@@ -1,8 +1,8 @@
 ---
-description: Securing Stakepool Connections & Monitoring within a VPN, Prometheus & Grafana Metrics, Alerting to Telegram 
+description: Securing Stake pool Connections & Monitoring within a VPN, Prometheus & Grafana Metrics, Alerting to Telegram 
 ---
 
-# Securing Stakepool Connections & Monitoring with Tailscale
+# Securing Stake pool Connections & Monitoring with Tailscale
 
 This guide will demonstrate how to use [Tailscale](https://tailscale.com) to manage a [WireGuard](https://www.wireguard.com/) VPN, securely connecting your
 block producer and relays. You will learn to scrape data with [Prometheus](https://prometheus.io/) and display it using [Grafana](https://grafana.com/)
@@ -60,10 +60,10 @@ ip a
 ### Disable Key Expiry
 
 :::caution
-Failure to disable key expiry will knock your pool offline when they expire after 90 days. Don't skip this step. You have been warned.
+Failure to disable key expiry will knock your pool offline when they expire after 180 days. Don't skip this step. You have been warned.
 :::
 
-Once the machines are added you should disable key expiry on each machine or the keys used to connect to the VPN will expire after 90 days and those
+Once the machines are added you should disable key expiry on each machine or the keys used to connect to the VPN will expire after 180 days and those
 nodes will be unable to connect. You can do this on the [Tailscale](https://tailscale.com) website by clicking the ... for each machine and choosing 'Disable key expiry'.
 You can always generate new keys at any time if you wish. If you do get locked out you can toggle the expiry on the website and restart the server to get back into it.
 
@@ -137,7 +137,7 @@ Test this out on each machine. You can then go in to your cardano-node topology 
 ## Monitoring
 
 We first need to tell cardano-node to have the metrics available to all interfaces and not just localhost. This way Prometheus will be able to access the
-metrics when Prometheus is on another machine. Open cardano-node's config.json and update the hasPrometheus section like this. Do this for all the
+metrics when they are on another machine in the VPN. Open cardano-node's config.json and update the hasPrometheus section like this. Do this for all the
 machines running cardano-node. Keep in mind you'll need to do this every time you pull in a new config.json when upgrading.
 
 ```json
@@ -342,5 +342,118 @@ If everything looks good tell Systemd to start the service at boot.
 sudo systemctl enable grafana-server.service
 ```
 
+You should now be able to open Grafana with the Tailscale IP addr or hostname of the machine it is installed
+on from your local machine. Here is an example.
+
+http://100.120.233.29:3000
+
+It will ask you to set a username and password on first log in. The next step is adding our Prometheus
+data source. In Grafana's sidebar find the data sources page. They have changed the URL/name a few times.
+For my installation it is http://100.120.233.29:3000/connections/datasources.
+
+Click on 'Add new data source'. The only section we need to edit here is 'Prometheus server URL'.
+If Prometheus is on the same server as Grafana you can just add http://localhost:9090 then hit
+the Save & test button. If Prometheus is on a different server add it's Tailscale IP in place of localhost.
+
 ## Dashboard/s
+
+We can now grab the [dashboard](https://raw.githubusercontent.com/armada-alliance/dashboards/main/Armada-Alliance.json) for this guide and import it into Grafana. Download this dashboard somewhere
+on your local machine. Next find the Dashboards tab in Grafana and click 'New' then 'Import'. Choose the dash you
+you just downloaded above.
+
+If every things connected correctly you can now choose the dashboard from the Dashboards sidebar to view it.
+
+## Alerting to Telegram
+
+### Create a Telegram bot
+
+Go to [https://t.me/botfather](https://t.me/botfather) in Telegram and create a new bot and give it a name and username, then copy your API access token.
+
+> /newbot
+>
+> Grafana\_Alerts
+>
+> my\_\_pool\_\_bot
+
+Something like that. Get creative.
+
+### Create a Telegram group
+
+In Telegram you can create a group by clicking on the :pencil:symbol next to the search bar. You can go back and add an image and change the name later.
+You can also add the bot to an existing group/s.
+
+### Add your bot to the new group
+
+:::info
+Return to Bot Father if you need a link to your bot or if you need the api token.
+
+[https://t.me/botfather](https://t.me/botfather)
+:::
+
+Open botfather Follow the t.me link to your bot. Start/enable the bot and click on the three dots and 'Add to Group'. Add your bot to your new group.
+
+### Find your groups Chat ID
+
+:::caution
+You may have to post in your new group if you cannot find the chat.id that starts with a - sign. Also Firefox displays the json returned in an easier to read format than Chrome.
+:::
+
+Paste your bots API token into the url below. Determine your Chat ID. Starts with - sign like below.
+
+```
+https://api.telegram.org/bot\<YOUR BOT API TOKEN>/getUpdates
+
+```
+
+![ID will start with a - sign like above](/img/alert.chat.id.png)
+
+## Create a notification channel in Grafana
+
+Click on Alerting in Grafana's left hand vertical menu and choose notification channels. Choose 'Contact Points'. Give it a name and choose Telegram under integration. Enter the token and the chat id value you copied earlier. Click test and you should get a green 'test notification sent' and a message in your new group. If so go ahead and click save.
+
+### Add profile image for your bot
+
+Return to [botfather](https://t.me/botfather) and type /setuserpic choose your bot and click the paperclip icon to choose the image.
+
+## Creating Alerts
+
+Unfortunately alerting rules do not export with the dashboard so we will have to go through setting alerts.
+I am going to show a few I have setup which is a good start and focuses only on alerting for cardano-node.
+
+Specifically we will alert if a node is not receiving tx's into it's mempool, if the chains block height stalls and if peers drop
+below a set threshold. You can of course go crazy with it just remember sometimes less is more and you do not
+want a lot of noise on the alerts.
+
+### No tx's in mempool for 3 minutes.
+
+Open the dashboard and edit the 'C1 Tx's in Mempool' panel. Click on the Alert tab just below the displayed metrics.
+Click on 'New alert rule' Give the rule a name. I used 'C1 Mempool tx'. Fill it in using the image below. Fill it in using the image below.
+You can then repeat this for each node.
+
+![](/img/C1-mempool-alert.png)
+
+### Block height stall longer than 3 minutes.
+
+Now edit the 'Block Height' panel, click the Alert tab and make it look like this. I named this rule 'Height stall > 3m'.
+
+![](/img/block-height-alert.png)
+
+### Peer count.
+
+For this one an alert will be created for each of the Peers panel. This will differ depending on the nodes role.
+A BP only connects to your relays. In this guide there are 3 relays connected to each BP 4 if you connect both BP's
+to each others topology file.
+
+Relays on the other hand will have a much higher peer count. This is what I have on this dashboard for C1 & R1 panels.
+
+#### C1-C2 Peers alert
+
+![](/img/C1-peer-alert.png)
+
+#### R1-R3 Peers alert
+
+![](/img/R1-peer-alert.png)
+
+
+
 

@@ -31,10 +31,10 @@ module.exports = {
     
     algolia: {
       // The application ID provided by Algolia
-      appId: process.env.ALGOLIA_APP_ID,
+      appId: 'QTMN0FOYD2',
 
       // Public API key: it is safe to commit it
-      apiKey: process.env.ALGOLIA_API_KEY,
+      apiKey: '23c43269e52c961c870f8489a4e9061e',
 
       indexName: 'armada-alliance',
 
