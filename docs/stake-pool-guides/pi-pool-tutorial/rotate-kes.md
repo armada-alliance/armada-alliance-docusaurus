@@ -4,6 +4,8 @@
 
 :::info
 
+You only generate a new KES pair and opcert if you have made a block in the previous KES period. It used to be you would rotate within the 92 days regardless but this has changed. Counter starts at 0 and only increments if a block has been forged.
+
 It is best to rename the old **kes.vkey**, **kes.skey** & **node.cert** files beforehand. Append the date. I tend to use mv instead of cp. This way I do not start creating copies of files.
 
 :::

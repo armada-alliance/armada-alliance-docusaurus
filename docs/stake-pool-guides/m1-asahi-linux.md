@@ -23,15 +23,9 @@ Desktop version does not have the default alarm user, the user of your choice is
 
 :::info
 
-There is a handy script that can delete the partitions that the Asahi installer creates. Use this if you wish to start over. 
-https://github.com/AsahiLinux/asahi-installer/issues/76#issuecomment-1094359888
+Follow this guide on youtube if you want to delete the partitions the Asahi installer creates.
 
-You can invoke it from MacOS or from within 1TR but not from Linux OS.
-
-
-```bash title=">_ Terminal"
-curl -L https://alx.sh/wipe-linux | sh
-```
+[uninstall Asahi](https://www.youtube.com/watch?v=nMnWTq2H-N0)
 
 :::
 
