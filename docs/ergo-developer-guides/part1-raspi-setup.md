@@ -93,7 +93,7 @@ cd .ssh
 Next you'll open the known_hosts folder which keeps the username public keys. You'll then delete all the former pi@headless.local logins
 
 ```bash
-sudo nano known_hosts
+nano known_hosts
 ```
 
 `Ctrl+k` on the lines with headless to wipe them out (nice little trick).
@@ -318,7 +318,7 @@ so `cd` up a level and change mode on the directory
 
 ```bash
 cd ..
-sudo chmod -R 777 hd1 
+sudo chown -R $USER:$USER /mnt/hd1 
 ```
 
 changes permissions in directory hd1 to read write 

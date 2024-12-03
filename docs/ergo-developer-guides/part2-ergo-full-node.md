@@ -104,7 +104,7 @@ Note: GNU Wget is a free utility for non-interactive download of files from the 
 Next, setup the ergo node configuration file
 
 ```bash
-sudo nano ergo.conf
+nano ergo.conf
 ```
 Note: sudo is super user do (admin privileges). Nano is command line to touch and edit the ergo.conf file. You will now be inside the ergo.conf file. If the file didn't exist, it was just now created.
 
@@ -177,12 +177,12 @@ java -jar -Xmx2g ergo-5.0.14.jar --mainnet -c ergo.conf
 
 ### API Key
 
-http://headless.local:9053/panel
+http://127.0.0.1:9053/panel
 
 Update hello in the command below with a custom API password. Where instead of **hello** insert custom password!
 
 ```
-curl -X POST "http://213.239.193.208:9053/utils/hash/blake2b" \
+curl -X POST "http://127.0.0.1:9053/utils/hash/blake2b" \
 -H "accept: application/json" \
 -H "Content-Type: application/json" \
 -d "\"hello\""
